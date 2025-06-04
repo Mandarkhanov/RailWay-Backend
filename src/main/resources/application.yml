@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/railway
+    username: postgres
+    password: 1234
+
+flyway:
+  url: jdbc:postgresql://localhost:5432/railway
+  user: postgres
+  password: 1234
+  enabled: true
+  locations:
+    - 'classpath:db/migration'
+  validate-on-migrate: false
+  baseline-on-migrate: true
+  baseline-version: 0
