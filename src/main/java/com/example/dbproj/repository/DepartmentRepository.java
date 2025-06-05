@@ -18,6 +18,6 @@ public interface DepartmentRepository extends PagingAndSortingRepository<Departm
      * @return a List of Strings, each representing a department name.
      */
     @Query("SELECT d.name FROM Department d")
-    List<String> findAllNames(); // Новый метод для получения только названий
+    List<String> findAllNames();
 
 }
