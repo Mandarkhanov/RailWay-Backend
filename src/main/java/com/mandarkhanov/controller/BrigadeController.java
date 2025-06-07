@@ -1,7 +1,7 @@
-package com.example.dbproj.controller;
+package com.mandarkhanov.controller;
 
-import com.example.dbproj.model.Brigade;
-import com.example.dbproj.repository.BrigadeRepository;
+import com.mandarkhanov.model.Brigade;
+import com.mandarkhanov.repository.BrigadeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;

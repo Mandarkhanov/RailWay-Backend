@@ -1,10 +1,10 @@
-package com.example.dbproj;
+package com.mandarkhanov;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class DbprojApplicationTests {
+class RailWayApplicationTests {
 
 	@Test
 	void contextLoads() {

@@ -1,7 +1,7 @@
-package com.example.dbproj.controller;
+package com.mandarkhanov.controller;
 
-import com.example.dbproj.model.Employee;
-import com.example.dbproj.repository.EmployeeRepository;
+import com.mandarkhanov.model.Employee;
+import com.mandarkhanov.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;

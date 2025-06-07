@@ -1,13 +1,13 @@
-package com.example.dbproj;
+package com.mandarkhanov;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class DbprojApplication {
+public class RailWayApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DbprojApplication.class, args);
+		SpringApplication.run(RailWayApplication.class, args);
 	}
 
 }

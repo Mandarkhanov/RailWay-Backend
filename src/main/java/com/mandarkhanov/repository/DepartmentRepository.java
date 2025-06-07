@@ -1,6 +1,6 @@
-package com.example.dbproj.repository;
+package com.mandarkhanov.repository;
 
-import com.example.dbproj.model.Department;
+import com.mandarkhanov.model.Department;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;

@@ -1,7 +1,7 @@
-package com.example.dbproj.controller;
+package com.mandarkhanov.controller;
 
-import com.example.dbproj.model.Position;
-import com.example.dbproj.repository.PositionRepository;
+import com.mandarkhanov.model.Position;
+import com.mandarkhanov.repository.PositionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;

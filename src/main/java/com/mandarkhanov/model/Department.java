@@ -1,4 +1,4 @@
-package com.example.dbproj.model;
+package com.mandarkhanov.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

@@ -1,4 +1,4 @@
-package com.example.dbproj.model;
+package com.mandarkhanov.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;

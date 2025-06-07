@@ -1,6 +1,6 @@
-package com.example.dbproj.repository;
+package com.mandarkhanov.repository;
 
-import com.example.dbproj.model.MedicalExamination;
+import com.mandarkhanov.model.MedicalExamination;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
