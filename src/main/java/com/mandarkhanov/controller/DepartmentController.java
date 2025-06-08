@@ -1,34 +1,69 @@
 package com.mandarkhanov.controller;
 
+import com.mandarkhanov.dto.DepartmentDto;
+import com.mandarkhanov.exception.ResourceNotFoundException;
 import com.mandarkhanov.model.Department;
 import com.mandarkhanov.repository.DepartmentRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173") // Or your Vite frontend port, or "*" for dev
+@RequestMapping("/departments")
+@CrossOrigin(origins = "http://localhost:5173")
 public class DepartmentController {
 
     @Autowired
     private DepartmentRepository departmentRepository;
 
-    @GetMapping("/departments")
+    @GetMapping
     public Iterable<Department> getAll() {
         return departmentRepository.findAll();
     }
 
-    /**
-     * Handles GET requests to /departments/names.
-     * Returns a list containing only the names of all departments.
-     *
-     * @return a List of Strings representing department names.
-     */
-    @GetMapping("/departments/names")
+    @GetMapping("/{id}")
+    public ResponseEntity<Department> getById(@PathVariable Integer id) {
+        Department department = departmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Отдел с ID " + id + " не найден"));
+
+        return ResponseEntity.ok(department);
+    }
+
+    @GetMapping("/names")
     public List<String> getAllNames() {
         return departmentRepository.findAllNames();
+    }
+
+    @PostMapping
+    public Department create(@Valid @RequestBody DepartmentDto departmentDto) {
+        Department department = new Department();
+        department.setName(departmentDto.getName());
+        department.setDescription(departmentDto.getDescription());
+        return departmentRepository.save(department);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Department> update(@PathVariable Integer id,@Valid @RequestBody DepartmentDto departmentDetails) {
+        Department department = departmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Отдел с ID " + id + " не найден"));
+
+        department.setName(departmentDetails.getName());
+        department.setDescription(departmentDetails.getDescription());
+
+        final Department updatedDepartment = departmentRepository.save(department);
+        return ResponseEntity.ok(updatedDepartment);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Integer id) {
+        Department department = departmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Отдел с ID " + id + " не найден"));
+
+        departmentRepository.delete(department);
+
+        return ResponseEntity.noContent().build();
     }
 }

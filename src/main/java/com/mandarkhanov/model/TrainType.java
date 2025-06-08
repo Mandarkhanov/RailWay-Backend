@@ -11,7 +11,7 @@ import lombok.Data;
 public class TrainType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "train_id")
+    @Column(name = "type_id")
     private Integer id;
 
     @NotNull
