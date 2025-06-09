@@ -114,20 +114,20 @@ INSERT INTO routes (name, start_station, end_station, distance_km, category_id) 
 
 INSERT INTO route_stops (route_id, station_id, stop_order, arrival_offset, departure_offset, platform) VALUES
 -- Остановки для маршрута 'Москва - Санкт-Петербург' (route_id=1)
-((SELECT route_id FROM routes WHERE name = 'Москва - Санкт-Петербург'), (SELECT station_id FROM stations WHERE name = 'Москва Павелецкая'), 1, NULL, '0 minutes'::INTERVAL, '1'), -- Москва (начальная)
-((SELECT route_id FROM routes WHERE name = 'Москва - Санкт-Петербург'), (SELECT station_id FROM stations WHERE name = 'Владимир'), 2, '1 hours 45 minutes'::INTERVAL, '1 hours 50 minutes'::INTERVAL, '3'), -- Владимир (промежуточная)
-((SELECT route_id FROM routes WHERE name = 'Москва - Санкт-Петербург'), (SELECT station_id FROM stations WHERE name = 'Санкт-Петербург Московский'), 3, '8 hours 0 minutes'::INTERVAL, NULL, '5'), -- Санкт-Петербург (конечная)
+((SELECT route_id FROM routes WHERE name = 'Москва - Санкт-Петербург'), (SELECT station_id FROM stations WHERE name = 'Москва Павелецкая'), 1, NULL, 0, '1'), -- Москва (начальная), 0 минут
+((SELECT route_id FROM routes WHERE name = 'Москва - Санкт-Петербург'), (SELECT station_id FROM stations WHERE name = 'Владимир'), 2, 105, 110, '3'), -- Владимир (промежуточная), прибытие через 1ч 45м (105 мин), отправление через 1ч 50м (110 мин)
+((SELECT route_id FROM routes WHERE name = 'Москва - Санкт-Петербург'), (SELECT station_id FROM stations WHERE name = 'Санкт-Петербург Московский'), 3, 480, NULL, '5'), -- Санкт-Петербург (конечная), прибытие через 8ч (480 мин)
 -- Остановки для маршрута 'Москва - Нижний Новгород' (route_id=2)
-((SELECT route_id FROM routes WHERE name = 'Москва - Нижний Новгород'), (SELECT station_id FROM stations WHERE name = 'Москва Павелецкая'), 1, NULL, '0 minutes'::INTERVAL, '2'), -- Москва (начальная)
-((SELECT route_id FROM routes WHERE name = 'Москва - Нижний Новгород'), (SELECT station_id FROM stations WHERE name = 'Владимир'), 2, '3 hours 30 minutes'::INTERVAL, '3 hours 35 minutes'::INTERVAL, '4'), -- Владимир (промежуточная)
-((SELECT route_id FROM routes WHERE name = 'Москва - Нижний Новгород'), (SELECT station_id FROM stations WHERE name = 'Нижний Новгород Московский'), 3, '4 hours 0 minutes'::INTERVAL, NULL, '3'), -- Нижний Новгород (конечная)
+((SELECT route_id FROM routes WHERE name = 'Москва - Нижний Новгород'), (SELECT station_id FROM stations WHERE name = 'Москва Павелецкая'), 1, NULL, 0, '2'), -- Москва (начальная), 0 минут
+((SELECT route_id FROM routes WHERE name = 'Москва - Нижний Новгород'), (SELECT station_id FROM stations WHERE name = 'Владимир'), 2, 210, 215, '4'), -- Владимир (промежуточная), прибытие через 3ч 30м (210 мин), отправление через 3ч 35м (215 мин)
+((SELECT route_id FROM routes WHERE name = 'Москва - Нижний Новгород'), (SELECT station_id FROM stations WHERE name = 'Нижний Новгород Московский'), 3, 240, NULL, '3'), -- Нижний Новгород (конечная), прибытие через 4ч (240 мин)
 -- Остановки для маршрута 'Санкт-Петербург - Сочи' (route_id=3)
-((SELECT route_id FROM routes WHERE name = 'Санкт-Петербург - Сочи'), (SELECT station_id FROM stations WHERE name = 'Санкт-Петербург Московский'), 1, NULL, '0 minutes'::INTERVAL, '7'), -- Санкт-Петербург (начальная)
-((SELECT route_id FROM routes WHERE name = 'Санкт-Петербург - Сочи'), (SELECT station_id FROM stations WHERE name = 'Казань Пассажирская'), 2, '20 hours 0 minutes'::INTERVAL, '20 hours 30 minutes'::INTERVAL, '2'), -- Казань (промежуточная)
-((SELECT route_id FROM routes WHERE name = 'Санкт-Петербург - Сочи'), (SELECT station_id FROM stations WHERE name = 'Сочи'), 3, '40 hours 0 minutes'::INTERVAL, NULL, '1'), -- Сочи (конечная)
+((SELECT route_id FROM routes WHERE name = 'Санкт-Петербург - Сочи'), (SELECT station_id FROM stations WHERE name = 'Санкт-Петербург Московский'), 1, NULL, 0, '7'), -- Санкт-Петербург (начальная), 0 минут
+((SELECT route_id FROM routes WHERE name = 'Санкт-Петербург - Сочи'), (SELECT station_id FROM stations WHERE name = 'Казань Пассажирская'), 2, 1200, 1230, '2'), -- Казань (промежуточная), прибытие через 20ч (1200 мин), отправление через 20ч 30м (1230 мин)
+((SELECT route_id FROM routes WHERE name = 'Санкт-Петербург - Сочи'), (SELECT station_id FROM stations WHERE name = 'Сочи'), 3, 2400, NULL, '1'), -- Сочи (конечная), прибытие через 40ч (2400 мин)
 -- Остановки для маршрута 'Москва - Владимир (Пригородный)' (route_id=4)
-((SELECT route_id FROM routes WHERE name = 'Москва - Владимир (Пригородный)'), (SELECT station_id FROM stations WHERE name = 'Москва Павелецкая'), 1, NULL, '0 minutes'::INTERVAL, '8'), -- Москва (начальная)
-((SELECT route_id FROM routes WHERE name = 'Москва - Владимир (Пригородный)'), (SELECT station_id FROM stations WHERE name = 'Владимир'), 2, '1 hours 50 minutes'::INTERVAL, NULL, '1'); -- Владимир (конечная)
+((SELECT route_id FROM routes WHERE name = 'Москва - Владимир (Пригородный)'), (SELECT station_id FROM stations WHERE name = 'Москва Павелецкая'), 1, NULL, 0, '8'), -- Москва (начальная), 0 минут
+((SELECT route_id FROM routes WHERE name = 'Москва - Владимир (Пригородный)'), (SELECT station_id FROM stations WHERE name = 'Владимир'), 2, 110, NULL, '1'); -- Владимир (конечная), прибытие через 1ч 50м (110 мин)
 
 
 INSERT INTO schedules (train_id, train_number, type_id, train_status, route_id, departure_time, arrival_time, base_price) VALUES

@@ -92,8 +92,8 @@ CREATE TABLE route_stops (
     route_id INTEGER NOT NULL REFERENCES routes(route_id) ON DELETE CASCADE,
     station_id INTEGER NOT NULL REFERENCES stations(station_id) ON DELETE RESTRICT,
     stop_order INTEGER NOT NULL CHECK (stop_order > 0), -- Порядковый номер остановки на маршруте (1, 2, 3...)
-    arrival_offset INTERVAL, -- Смещение времени прибытия относительно отправления с начальной станции (может быть NULL для первой остановки)
-    departure_offset INTERVAL, -- Смещение времени отправления относительно отправления с начальной станции (может быть NULL для конечной)
+    arrival_offset INTEGER, -- ИЗМЕНЕНО: Смещение в минутах
+    departure_offset INTEGER, -- ИЗМЕНЕНО: Смещение в минутах
     platform VARCHAR(10), -- Номер пути/платформы
     UNIQUE (route_id, stop_order), -- Остановка должна быть уникальной по порядку в маршруте
     UNIQUE (route_id, station_id) -- Станция должна быть уникальной в маршруте (обычно)

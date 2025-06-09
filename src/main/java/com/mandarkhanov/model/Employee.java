@@ -49,7 +49,7 @@ public class Employee {
     private BigDecimal salary;
 
     @PositiveOrZero
-    @Column(name = "children_count", columnDefinition = "INTEDER DEFAULT 0")
+    @Column(name = "children_count", columnDefinition = "INTEGER DEFAULT 0")
     private Integer childrenCount;
 
     @NotNull
