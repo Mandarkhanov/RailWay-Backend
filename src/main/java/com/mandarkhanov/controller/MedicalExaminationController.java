@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/medical-examinations")
-@CrossOrigin(origins = "http://localhost:5173")
 public class MedicalExaminationController {
 
     @Autowired

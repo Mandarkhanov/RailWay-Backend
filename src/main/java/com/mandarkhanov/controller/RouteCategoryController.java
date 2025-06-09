@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/route-categories")
-@CrossOrigin(origins = "http://localhost:5173")
 public class RouteCategoryController {
 
     @Autowired

@@ -17,7 +17,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/brigades")
-@CrossOrigin(origins = "http://localhost:5173")
 public class BrigadeController {
     @Autowired
     private BrigadeRepository brigadeRepository;

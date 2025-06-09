@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/trains")
-@CrossOrigin(origins = "http://localhost:5173")
 public class TrainController {
     @Autowired
     private TrainRepository trainRepository;

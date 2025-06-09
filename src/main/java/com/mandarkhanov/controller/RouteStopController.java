@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/route-stops")
-@CrossOrigin(origins = "http://localhost:5173")
 public class RouteStopController {
     @Autowired
     private RouteStopRepository routeStopRepository;

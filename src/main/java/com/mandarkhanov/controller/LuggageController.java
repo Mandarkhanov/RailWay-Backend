@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/luggage")
-@CrossOrigin(origins = "http://localhost:5173")
 public class LuggageController {
 
     @Autowired

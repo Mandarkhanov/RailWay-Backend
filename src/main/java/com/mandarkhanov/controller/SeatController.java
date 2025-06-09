@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/seats")
-@CrossOrigin(origins = "http://localhost:5173")
 public class SeatController {
 
     @Autowired
