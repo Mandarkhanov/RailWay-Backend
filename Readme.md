@@ -126,12 +126,8 @@
 
     - Выполните в терминале (в корне проекта):
 
-        ```bash
-            # Для Linux/macOS
-            ./gradlew bootRun 
-
-            # Для Windows
-            .\gradlew.bat bootRun
-        ```
+    ```bash
+    .\gradlew.bat bootRun
+    ```
 
 5. **Готово!** Приложение будет доступно по адресу http://localhost:8080.
