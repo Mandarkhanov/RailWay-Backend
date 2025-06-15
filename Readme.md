@@ -104,30 +104,30 @@
 2. **Настройте и запустите базу данных в Docker:**
 
     - Создайте в корне проекта файл docker-compose.yml со следующим содержимым:
-
-              `version: '3.8'  services:   postgres-db:     image: 'postgres:12-alpine'     container_name: railway-db     environment:       POSTGRES_USER: postgres       POSTGRES_PASSWORD: 1234       POSTGRES_DB: railway     ports:       - "5432:5432"     volumes:       - postgres_data:/var/lib/postgresql/data     restart: always  volumes:   postgres_data:`
-
-
-        IGNORE_WHEN_COPYING_START
-        
-        content_copy download
-        
-        Use code [with caution](https://support.google.com/legal/answer/13505487). Yaml
-        
-        IGNORE_WHEN_COPYING_END
-        
+        ```
+            `version: '3.8'
+       
+            services:
+                postgres-db:
+                    image: 'postgres:12-alpine'
+                    container_name: railway-db
+                    environment:
+                    POSTGRES_USER: postgres
+                    POSTGRES_PASSWORD: 1234
+                    POSTGRES_DB: railway
+                ports:
+                    - "5432:5432"
+                volumes:
+                    - postgres_data:/var/lib/postgresql/data
+                restart:
+                    always
+       
+            volumes:
+                postgres_data:
+        ```
     - Запустите контейнер с базой данных:
         
               `docker-compose up -d`
-            
-        
-        IGNORE_WHEN_COPYING_START
-        
-        content_copy download
-        
-        Use code [with caution](https://support.google.com/legal/answer/13505487). Bash
-        
-        IGNORE_WHEN_COPYING_END
 
 3. **Проверьте конфигурацию приложения:**
 
@@ -138,16 +138,12 @@
     - При первом запуске **Flyway** автоматически выполнит все миграции, создаст таблицы и заполнит их начальными данными.
 
     - Выполните в терминале (в корне проекта):
+      ```
+      # Для Linux/macOS
+      ./gradlew bootRun 
 
-              `# Для Linux/macOS ./gradlew bootRun  # Для Windows .\gradlew.bat bootRun`
-
-
-        IGNORE_WHEN_COPYING_START
-        
-        content_copy download
-        
-        Use code [with caution](https://support.google.com/legal/answer/13505487). Bash
-        
-        IGNORE_WHEN_COPYING_END
+      # Для Windows
+      .\gradlew.bat bootRun
+      ```
 
 5. **Готово!** Приложение будет доступно по адресу http://localhost:8080.
