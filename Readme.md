@@ -97,15 +97,16 @@
 ### Пошаговая инструкция
 
 1. **Клонируйте репозиторий:**
-
-          `git clone <your-repository-url> cd RailWay-Backend`
+    ```
+    git clone <your-repository-url> cd RailWay-Backend
+    ```
 
 
 2. **Настройте и запустите базу данных в Docker:**
 
     - Создайте в корне проекта файл docker-compose.yml со следующим содержимым:
         ```
-            `version: '3.8'
+            version: '3.8'
        
             services:
                 postgres-db:
@@ -125,9 +126,11 @@
             volumes:
                 postgres_data:
         ```
-    - Запустите контейнер с базой данных:
-        
-              `docker-compose up -d`
+      - Запустите контейнер с базой данных:
+
+        ```
+        docker-compose up -d
+        ```
 
 3. **Проверьте конфигурацию приложения:**
 
