@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
+import org.hibernate.annotations.Formula;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -57,4 +58,19 @@ public class Schedule {
     @PositiveOrZero
     @Column(name = "base_price", nullable = false)
     private BigDecimal basePrice;
+
+    @Formula("(SELECT COUNT(*) FROM tickets t WHERE t.schedule_id = schedule_id)")
+    private int totalTickets;
+
+    @Formula("(SELECT COUNT(*) FROM tickets t WHERE t.schedule_id = schedule_id AND t.ticket_status = 'оплачен')")
+    private int paidTickets;
+
+    @Formula("(SELECT COUNT(*) FROM tickets t WHERE t.schedule_id = schedule_id AND t.ticket_status = 'забронирован')")
+    private int bookedTickets;
+
+    @Formula("(SELECT COUNT(*) FROM tickets t WHERE t.schedule_id = schedule_id AND t.ticket_status = 'возвращен')")
+    private int returnedTickets;
+
+    @Formula("(SELECT COUNT(*) FROM tickets t WHERE t.schedule_id = schedule_id AND t.ticket_status = 'использован')")
+    private int usedTickets;
 }

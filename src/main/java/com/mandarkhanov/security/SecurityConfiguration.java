@@ -32,12 +32,16 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // <-- ДОБАВЛЯЕМ ГЛОБАЛЬНУЮ КОНФИГУРАЦИЮ CORS
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
                         req.requestMatchers("/api/auth/**", "/hello").permitAll()
-                                .requestMatchers(HttpMethod.OPTIONS).permitAll() // <-- РАЗРЕШАЕМ ВСЕ OPTIONS ЗАПРОСЫ
+                                .requestMatchers(HttpMethod.OPTIONS).permitAll()
+                                .requestMatchers("/api/admin/**").hasAuthority(ROLE_ADMIN.name())
+                                .requestMatchers("/api/user/**").hasAnyAuthority(ROLE_USER.name(), ROLE_ADMIN.name())
                                 .requestMatchers(HttpMethod.GET).hasAnyAuthority(ROLE_ADMIN.name(), ROLE_USER.name())
+                                .requestMatchers(HttpMethod.POST, "/api/user/passengers").hasAnyAuthority(ROLE_USER.name(), ROLE_ADMIN.name())
+                                .requestMatchers(HttpMethod.POST, "/tickets").hasAnyAuthority(ROLE_USER.name(), ROLE_ADMIN.name())
                                 .requestMatchers(HttpMethod.POST).hasAuthority(ROLE_ADMIN.name())
                                 .requestMatchers(HttpMethod.PUT).hasAuthority(ROLE_ADMIN.name())
                                 .requestMatchers(HttpMethod.DELETE).hasAuthority(ROLE_ADMIN.name())
@@ -53,14 +57,11 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Указываем, с каких origin разрешены запросы
         configuration.setAllowedOrigins(List.of("http://localhost:5173"));
-        // Указываем разрешенные HTTP-методы
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        // Указываем разрешенные заголовки
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // Применяем конфигурацию для всех путей
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }

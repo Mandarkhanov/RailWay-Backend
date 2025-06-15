@@ -1,5 +1,6 @@
 package com.mandarkhanov.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties; // <-- Добавить импорт
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -18,4 +19,9 @@ public class Department {
     private String name;
 
     private String description;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "manager_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private Employee manager;
 }

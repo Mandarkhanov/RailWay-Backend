@@ -6,10 +6,16 @@ import com.mandarkhanov.model.Car;
 import com.mandarkhanov.model.Seat;
 import com.mandarkhanov.repository.CarRepository;
 import com.mandarkhanov.repository.SeatRepository;
+import com.mandarkhanov.service.SeatSpecification;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/seats")
@@ -20,10 +26,34 @@ public class SeatController {
     @Autowired
     private CarRepository carRepository;
 
-    @GetMapping
-    public Iterable<Seat> getAll() {
-        return seatRepository.findAll();
+    @GetMapping("/filtered")
+    public Iterable<Seat> getFiltered(
+            @RequestParam(required = false) Integer scheduleId,
+            @RequestParam(required = false) Integer routeId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate departureDate,
+            @RequestParam(required = false) Boolean isAvailable
+    ) {
+        Specification<Seat> spec = Specification.where(SeatSpecification.hasAvailability(isAvailable))
+                .and(SeatSpecification.forSchedule(scheduleId))
+                .and(SeatSpecification.forRoute(routeId))
+                .and(SeatSpecification.forDepartureDate(departureDate));
+        return seatRepository.findAll(spec);
     }
+
+    @GetMapping("/filtered/count")
+    public Map<String, Long> getFilteredCount(
+            @RequestParam(required = false) Integer scheduleId,
+            @RequestParam(required = false) Integer routeId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate departureDate,
+            @RequestParam(required = false) Boolean isAvailable
+    ) {
+        Specification<Seat> spec = Specification.where(SeatSpecification.hasAvailability(isAvailable))
+                .and(SeatSpecification.forSchedule(scheduleId))
+                .and(SeatSpecification.forRoute(routeId))
+                .and(SeatSpecification.forDepartureDate(departureDate));
+        return Map.of("count", seatRepository.count(spec));
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Seat> getById(@PathVariable Integer id) {
@@ -35,7 +65,7 @@ public class SeatController {
     @PostMapping
     public Seat create(@Valid @RequestBody SeatDto seatDto) {
         Car car = carRepository.findById(seatDto.getCarId())
-                .orElseThrow(() -> new ResourceNotFoundException("Вагон с ID " + seatDto.getCarId() + " не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException("Вагон с ID " + seatDto.getCarId() + " не найдена"));
         Seat seat = new Seat();
         seat.setCar(car);
         seat.setSeatNumber(seatDto.getSeatNumber());
@@ -50,7 +80,7 @@ public class SeatController {
         Seat seat = seatRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Место с ID " + id + " не найдено"));
         Car car = carRepository.findById(seatDetails.getCarId())
-                .orElseThrow(() -> new ResourceNotFoundException("Вагон с ID " + seatDetails.getCarId() + " не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException("Вагон с ID " + seatDetails.getCarId() + " не найдена"));
 
         seat.setCar(car);
         seat.setSeatNumber(seatDetails.getSeatNumber());

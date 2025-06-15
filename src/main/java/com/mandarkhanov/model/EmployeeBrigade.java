@@ -27,6 +27,6 @@ public class EmployeeBrigade {
     private Brigade brigade;
 
     @CreationTimestamp
-    @Column(name = "assigment_date", nullable = false, updatable = false)
-    private LocalDate assigmentDate;
+    @Column(name = "assignment_date", nullable = false, updatable = false)
+    private LocalDate assignmentDate;
 }

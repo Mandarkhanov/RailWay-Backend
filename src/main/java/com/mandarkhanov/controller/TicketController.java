@@ -2,12 +2,20 @@ package com.mandarkhanov.controller;
 
 import com.mandarkhanov.dto.TicketDto;
 import com.mandarkhanov.exception.ResourceNotFoundException;
-import com.mandarkhanov.model.*;
-import com.mandarkhanov.repository.*;
+import com.mandarkhanov.model.Ticket;
+import com.mandarkhanov.repository.TicketRepository;
+import com.mandarkhanov.service.TicketService;
+import com.mandarkhanov.service.TicketSpecification;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/tickets")
@@ -15,19 +23,63 @@ public class TicketController {
 
     @Autowired
     private TicketRepository ticketRepository;
+
     @Autowired
-    private ScheduleRepository scheduleRepository;
-    @Autowired
-    private PassengerRepository passengerRepository;
-    @Autowired
-    private SeatRepository seatRepository;
-    @Autowired
-    private LuggageRepository luggageRepository;
+    private TicketService ticketService;
 
     @GetMapping
-    public Iterable<Ticket> getAll() {
-        return ticketRepository.findAll();
+    public Iterable<Ticket> getAll(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate purchaseDateFrom,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate purchaseDateTo,
+            @RequestParam(required = false) String ticketStatus,
+            @RequestParam(required = false) Integer routeId,
+            @RequestParam(required = false) Integer minDistance,
+            @RequestParam(required = false) Integer maxDistance,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice
+    ) {
+        Specification<Ticket> spec = Specification.where(TicketSpecification.hasPurchaseDateBetween(purchaseDateFrom, purchaseDateTo))
+                .and(TicketSpecification.hasStatus(ticketStatus))
+                .and(TicketSpecification.forRoute(routeId))
+                .and(TicketSpecification.withRouteDistanceBetween(minDistance, maxDistance))
+                .and(TicketSpecification.hasPriceBetween(minPrice, maxPrice));
+        return ticketRepository.findAll(spec);
     }
+
+    @GetMapping("/count")
+    public Map<String, Long> getCount(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate purchaseDateFrom,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate purchaseDateTo,
+            @RequestParam(required = false) String ticketStatus,
+            @RequestParam(required = false) Integer routeId,
+            @RequestParam(required = false) Integer minDistance,
+            @RequestParam(required = false) Integer maxDistance,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice
+    ) {
+        Specification<Ticket> spec = Specification.where(TicketSpecification.hasPurchaseDateBetween(purchaseDateFrom, purchaseDateTo))
+                .and(TicketSpecification.hasStatus(ticketStatus))
+                .and(TicketSpecification.forRoute(routeId))
+                .and(TicketSpecification.withRouteDistanceBetween(minDistance, maxDistance))
+                .and(TicketSpecification.hasPriceBetween(minPrice, maxPrice));
+        return Map.of("count", ticketRepository.count(spec));
+    }
+
+    @GetMapping("/returned/count")
+    public Map<String, Long> getReturnedTicketsCount(
+            @RequestParam(required = false) Integer scheduleId,
+            @RequestParam(required = false) Integer routeId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate departureDate
+    ) {
+        Specification<Ticket> spec = Specification.where(TicketSpecification.hasStatus("возвращен"))
+                .and(TicketSpecification.forSchedule(scheduleId))
+                .and(TicketSpecification.forRoute(routeId))
+                .and(TicketSpecification.forDepartureDate(departureDate));
+
+        long count = ticketRepository.count(spec);
+        return Map.of("count", count);
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Ticket> getById(@PathVariable Integer id) {
@@ -38,48 +90,18 @@ public class TicketController {
 
     @PostMapping
     public Ticket create(@Valid @RequestBody TicketDto ticketDto) {
-        Ticket ticket = new Ticket();
-        updateTicketFromDto(ticket, ticketDto);
-        return ticketRepository.save(ticket);
+        return ticketService.createTicket(ticketDto);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Ticket> update(@PathVariable Integer id, @Valid @RequestBody TicketDto ticketDetails) {
-        Ticket ticket = ticketRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Билет с ID " + id + " не найден"));
-        updateTicketFromDto(ticket, ticketDetails);
-        final Ticket updatedTicket = ticketRepository.save(ticket);
+        Ticket updatedTicket = ticketService.updateTicket(id, ticketDetails);
         return ResponseEntity.ok(updatedTicket);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Integer id) {
-        Ticket ticket = ticketRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Билет с ID " + id + " не найден"));
-        ticketRepository.delete(ticket);
+        ticketService.deleteTicket(id);
         return ResponseEntity.noContent().build();
-    }
-
-    private void updateTicketFromDto(Ticket ticket, TicketDto dto) {
-        Schedule schedule = scheduleRepository.findById(dto.getScheduleId())
-                .orElseThrow(() -> new ResourceNotFoundException("Рейс с ID " + dto.getScheduleId() + " не найден"));
-        Passenger passenger = passengerRepository.findById(dto.getPassengerId())
-                .orElseThrow(() -> new ResourceNotFoundException("Пассажир с ID " + dto.getPassengerId() + " не найден"));
-        Seat seat = seatRepository.findById(dto.getSeatId())
-                .orElseThrow(() -> new ResourceNotFoundException("Место с ID " + dto.getSeatId() + " не найдено"));
-
-        ticket.setSchedule(schedule);
-        ticket.setPassenger(passenger);
-        ticket.setSeat(seat);
-        ticket.setPrice(dto.getPrice());
-        ticket.setTicketStatus(dto.getTicketStatus());
-
-        if (dto.getLuggageId() != null) {
-            Luggage luggage = luggageRepository.findById(dto.getLuggageId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Багаж с ID " + dto.getLuggageId() + " не найден"));
-            ticket.setLuggage(luggage);
-        } else {
-            ticket.setLuggage(null);
-        }
     }
 }

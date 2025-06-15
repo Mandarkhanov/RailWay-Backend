@@ -11,4 +11,6 @@ public class DepartmentDto {
     private String name;
 
     private String description;
+
+    private Integer managerId;
 }

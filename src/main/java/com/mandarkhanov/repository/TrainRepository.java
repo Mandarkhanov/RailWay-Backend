@@ -1,8 +1,10 @@
 package com.mandarkhanov.repository;
 
 import com.mandarkhanov.model.Train;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.stereotype.Repository;
 
-public interface TrainRepository extends PagingAndSortingRepository<Train, Integer>, CrudRepository<Train, Integer> {
+@Repository
+public interface TrainRepository extends JpaRepository<Train, Integer>, JpaSpecificationExecutor<Train> {
 }

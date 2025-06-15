@@ -6,10 +6,15 @@ import com.mandarkhanov.model.Employee;
 import com.mandarkhanov.model.MedicalExamination;
 import com.mandarkhanov.repository.EmployeeRepository;
 import com.mandarkhanov.repository.MedicalExaminationRepository;
+import com.mandarkhanov.service.MedicalExaminationSpecification;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/medical-examinations")
@@ -22,9 +27,48 @@ public class MedicalExaminationController {
     private EmployeeRepository employeeRepository;
 
     @GetMapping
-    public Iterable<MedicalExamination> getAll() {
-        return medicalExaminationRepository.findAll();
+    public Iterable<MedicalExamination> getAll(
+            @RequestParam(required = false) Integer positionId,
+            @RequestParam(required = false) Boolean result,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Character gender,
+            @RequestParam(required = false) Integer minAge,
+            @RequestParam(required = false) Integer maxAge,
+            @RequestParam(required = false) BigDecimal minSalary,
+            @RequestParam(required = false) BigDecimal maxSalary
+    ) {
+        Specification<MedicalExamination> spec = createSpecification(positionId, result, year, gender, minAge, maxAge, minSalary, maxSalary);
+        return medicalExaminationRepository.findAll(spec);
     }
+
+    @GetMapping("/count")
+    public Map<String, Long> getCount(
+            @RequestParam(required = false) Integer positionId,
+            @RequestParam(required = false) Boolean result,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Character gender,
+            @RequestParam(required = false) Integer minAge,
+            @RequestParam(required = false) Integer maxAge,
+            @RequestParam(required = false) BigDecimal minSalary,
+            @RequestParam(required = false) BigDecimal maxSalary
+    ) {
+        Specification<MedicalExamination> spec = createSpecification(positionId, result, year, gender, minAge, maxAge, minSalary, maxSalary);
+        long count = medicalExaminationRepository.count(spec);
+        return Map.of("count", count);
+    }
+
+    private Specification<MedicalExamination> createSpecification(
+            Integer positionId, Boolean result, Integer year, Character gender,
+            Integer minAge, Integer maxAge, BigDecimal minSalary, BigDecimal maxSalary) {
+
+        return Specification.where(MedicalExaminationSpecification.hasPosition(positionId))
+                .and(MedicalExaminationSpecification.hasResult(result))
+                .and(MedicalExaminationSpecification.inYear(year))
+                .and(MedicalExaminationSpecification.employeeHasGender(gender))
+                .and(MedicalExaminationSpecification.employeeIsAgeBetween(minAge, maxAge))
+                .and(MedicalExaminationSpecification.employeeHasSalaryBetween(minSalary, maxSalary));
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<MedicalExamination> getById(@PathVariable Integer id) {

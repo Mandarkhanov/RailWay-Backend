@@ -8,10 +8,14 @@ import com.mandarkhanov.model.Station;
 import com.mandarkhanov.repository.RouteCategoryRepository;
 import com.mandarkhanov.repository.RouteRepository;
 import com.mandarkhanov.repository.StationRepository;
+import com.mandarkhanov.service.RouteSpecification;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/routes")
@@ -26,9 +30,27 @@ public class RouteController {
     private RouteCategoryRepository routeCategoryRepository;
 
     @GetMapping
-    public Iterable<Route> getAll() {
-        return routeRepository.findAll();
+    public Iterable<Route> getAll(
+            @RequestParam(required = false) Integer categoryId,
+            @RequestParam(required = false) Integer endStationId
+    ) {
+        Specification<Route> spec = Specification
+                .where(RouteSpecification.hasCategory(categoryId))
+                .and(RouteSpecification.toStation(endStationId));
+        return routeRepository.findAll(spec);
     }
+
+    @GetMapping("/count")
+    public Map<String, Long> getCount(
+            @RequestParam(required = false) Integer categoryId,
+            @RequestParam(required = false) Integer endStationId
+    ) {
+        Specification<Route> spec = Specification
+                .where(RouteSpecification.hasCategory(categoryId))
+                .and(RouteSpecification.toStation(endStationId));
+        return Map.of("count", routeRepository.count(spec));
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Route> getById(@PathVariable Integer id) {

@@ -6,14 +6,17 @@ import com.mandarkhanov.model.Employee;
 import com.mandarkhanov.model.Position;
 import com.mandarkhanov.repository.EmployeeRepository;
 import com.mandarkhanov.repository.PositionRepository;
+import com.mandarkhanov.service.EmployeeSpecification;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/employees")
@@ -25,8 +28,53 @@ public class EmployeeController {
     private PositionRepository positionRepository;
 
     @GetMapping
-    public Iterable<Employee> getAll() {
-        return employeeRepository.findAll();
+    public Iterable<Employee> getAll(
+            @RequestParam(required = false) Integer departmentId,
+            @RequestParam(required = false) Integer brigadeId,
+            @RequestParam(required = false) Integer minExperience,
+            @RequestParam(required = false) Character gender,
+            @RequestParam(required = false) Integer minAge,
+            @RequestParam(required = false) Integer maxAge,
+            @RequestParam(required = false) Boolean hasChildren,
+            @RequestParam(required = false) BigDecimal minSalary,
+            @RequestParam(required = false) BigDecimal maxSalary,
+            @RequestParam(required = false) Boolean isManager) {
+
+        Specification<Employee> spec = createSpecification(departmentId, brigadeId, minExperience, gender, minAge, maxAge, hasChildren, minSalary, maxSalary, isManager);
+        return employeeRepository.findAll(spec);
+    }
+
+    @GetMapping("/count")
+    public Map<String, Long> getCount(
+            @RequestParam(required = false) Integer departmentId,
+            @RequestParam(required = false) Integer brigadeId,
+            @RequestParam(required = false) Integer minExperience,
+            @RequestParam(required = false) Character gender,
+            @RequestParam(required = false) Integer minAge,
+            @RequestParam(required = false) Integer maxAge,
+            @RequestParam(required = false) Boolean hasChildren,
+            @RequestParam(required = false) BigDecimal minSalary,
+            @RequestParam(required = false) BigDecimal maxSalary,
+            @RequestParam(required = false) Boolean isManager) {
+
+        Specification<Employee> spec = createSpecification(departmentId, brigadeId, minExperience, gender, minAge, maxAge, hasChildren, minSalary, maxSalary, isManager);
+        long count = employeeRepository.count(spec);
+        return Map.of("count", count);
+    }
+
+    private Specification<Employee> createSpecification(
+            Integer departmentId, Integer brigadeId, Integer minExperience, Character gender,
+            Integer minAge, Integer maxAge, Boolean hasChildren,
+            BigDecimal minSalary, BigDecimal maxSalary, Boolean isManager) {
+
+        return Specification.where(EmployeeSpecification.hasDepartment(departmentId))
+                .and(EmployeeSpecification.hasBrigade(brigadeId))
+                .and(EmployeeSpecification.hasExperienceGreaterThan(minExperience))
+                .and(EmployeeSpecification.hasGender(gender))
+                .and(EmployeeSpecification.isAgeBetween(minAge, maxAge))
+                .and(EmployeeSpecification.hasChildren(hasChildren))
+                .and(EmployeeSpecification.isSalaryBetween(minSalary, maxSalary))
+                .and(EmployeeSpecification.isManager(isManager));
     }
 
     @GetMapping("/{id}")
@@ -101,10 +149,6 @@ public class EmployeeController {
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * Приватный метод для валидации зарплаты сотрудника
-     * в соответствии с диапазоном в его должности.
-     */
     private void validateSalary(BigDecimal salary, Position position) {
         if (salary == null) {
             return;

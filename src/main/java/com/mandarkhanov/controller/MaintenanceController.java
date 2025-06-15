@@ -8,10 +8,16 @@ import com.mandarkhanov.model.Train;
 import com.mandarkhanov.repository.BrigadeRepository;
 import com.mandarkhanov.repository.MaintenanceRepository;
 import com.mandarkhanov.repository.TrainRepository;
+import com.mandarkhanov.service.MaintenanceSpecification;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/maintenances")
@@ -25,8 +31,25 @@ public class MaintenanceController {
     private BrigadeRepository brigadeRepository;
 
     @GetMapping
-    public Iterable<Maintenance> getAll() {
-        return maintenanceRepository.findAll();
+    public Iterable<Maintenance> getAll(
+            @RequestParam(required = false) Integer trainId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateFrom,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTo) {
+        Specification<Maintenance> spec = Specification
+                .where(MaintenanceSpecification.forTrain(trainId))
+                .and(MaintenanceSpecification.inDateRange(dateFrom, dateTo));
+        return maintenanceRepository.findAll(spec);
+    }
+
+    @GetMapping("/count")
+    public Map<String, Long> getCount(
+            @RequestParam(required = false) Integer trainId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateFrom,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTo) {
+        Specification<Maintenance> spec = Specification
+                .where(MaintenanceSpecification.forTrain(trainId))
+                .and(MaintenanceSpecification.inDateRange(dateFrom, dateTo));
+        return Map.of("count", maintenanceRepository.count(spec));
     }
 
     @GetMapping("/{id}")
