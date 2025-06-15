@@ -35,7 +35,7 @@ INSERT INTO employees (first_name, last_name, birth_date, gender, hire_date, pos
 ('Анна', 'Диспетчерова', '1990-04-18', 'Ж', '2016-11-11', (SELECT position_id FROM positions WHERE name = 'Диспетчер движения поездов'), 75000.00, 0, TRUE),
 ('Сергей', 'Осмотров', '1987-09-05', 'М', '2014-08-08', (SELECT position_id FROM positions WHERE name = 'Осмотрщик вагонов'), 50000.00, 1, TRUE),
 ('Олег', 'Составителев', '1992-12-01', 'М', '2020-07-15', (SELECT position_id FROM positions WHERE name = 'Составитель поездов'), 55000.00, 0, TRUE),
-('Николай', 'Локомотивин', '1983-06-18', 'М', '2011-05-03', (SELECT position_id FROM positions WHERE name = 'Машинист локомотива'), 80000.00, 1, TRUE), -- (Не годен - для примера)
+('Николай', 'Локомотивин', '1983-06-18', 'М', '2011-05-03', (SELECT position_id FROM positions WHERE name = 'Машинист локомотива'), 80000.00, 1, TRUE),
 ('Дмитрий', 'Ремонтников', '1975-03-10', 'М', '2005-09-01', (SELECT position_id FROM positions WHERE name = 'Начальник ремонтной бригады'), 90000.00, 3, TRUE),
 ('Елена', 'Техникова', '1988-09-05', 'Ж', '2018-04-11', (SELECT position_id FROM positions WHERE name = 'Техник по ремонту локомотивов'), 65000.00, 0, TRUE),
 ('Мария', 'Вагонова', '1991-01-25', 'Ж', '2017-05-03', (SELECT position_id FROM positions WHERE name = 'Техник по ремонту вагонов'), 62000.00, 0, TRUE),
@@ -81,12 +81,12 @@ INSERT INTO train_types (name) VALUES
 
 
 INSERT INTO stations (name, address, region) VALUES
-('Москва Павелецкая', 'Павелецкая площадь, 1А', 'Москва'), -- station_id = 1
-('Санкт-Петербург Московский', 'Невский проспект, 85', 'Санкт-Петербург'), -- station_id = 2
-('Нижний Новгород Московский', 'Площадь Революции, 2', 'Нижегородская область'), -- station_id = 3
-('Казань Пассажирская', 'Привокзальная площадь, 1', 'Республика Татарстан'), -- station_id = 4
-('Сочи', 'улица Горького, 56А', 'Краснодарский край'), -- station_id = 5
-('Владимир', 'Вокзальная площадь, 2', 'Владимирская область'); -- station_id = 6
+('Москва Павелецкая', 'Павелецкая площадь, 1А', 'Москва'),
+('Санкт-Петербург Московский', 'Невский проспект, 85', 'Санкт-Петербург'),
+('Нижний Новгород Московский', 'Площадь Революции, 2', 'Нижегородская область'),
+('Казань Пассажирская', 'Привокзальная площадь, 1', 'Республика Татарстан'),
+('Сочи', 'улица Горького, 56А', 'Краснодарский край'),
+('Владимир', 'Вокзальная площадь, 2', 'Владимирская область');
 
 
 INSERT INTO route_categories (name) VALUES
@@ -142,15 +142,14 @@ INSERT INTO train_crews (schedule_id, brigade_id, assignment_date) VALUES
 ((SELECT schedule_id FROM schedules WHERE train_number = '758А' AND departure_time = '2023-11-25 14:00:00'), (SELECT brigade_id FROM brigades WHERE name = 'Локомотивная бригада А'), '2023-11-25'), -- Лок. бригада А на рейсе 758А
 ((SELECT schedule_id FROM schedules WHERE train_number = '001М' AND departure_time = '2023-11-25 23:00:00'), (SELECT brigade_id FROM brigades WHERE name = 'Локомотивная бригада Б'), '2023-11-25'), -- Лок. бригада Б на рейсе 001М
 ((SELECT schedule_id FROM schedules WHERE train_number = '002Я' AND departure_time = '2023-11-26 08:00:00'), (SELECT brigade_id FROM brigades WHERE name = 'Локомотивная бригада А'), '2023-11-26'), -- Лок. бригада А на рейсе 002Я
--- Грузовой рейс 999Ч может иметь другую бригаду, но в тестовых данных пока пропустим для простоты
 ((SELECT schedule_id FROM schedules WHERE train_number = '6616' AND departure_time = '2023-11-25 18:30:00'), (SELECT brigade_id FROM brigades WHERE name = 'Локомотивная бригада Б'), '2023-11-25'); -- Лок. бригада Б на рейсе 6616
 
 
 INSERT INTO maintenance (train_id, brigade_id, start_date, end_date, type, result, is_repair) VALUES
 ((SELECT train_id FROM trains WHERE model = 'ЭП20'), (SELECT brigade_id FROM brigades WHERE name = 'Бригада по ремонту локомотивов'), '2023-10-01 09:00:00', '2023-10-05 17:00:00', 'ТО-2', 'Плановое ТО-2 выполнено, локомотив готов', FALSE),
-((SELECT train_id FROM trains WHERE model = 'Ласточка'), (SELECT brigade_id FROM brigades WHERE name = 'Бригада по ремонту вагонов'), '2023-10-10 08:00:00', NULL, 'ТР-1', 'Обнаружена серьезная неисправность ходовой части, ожидает запчастей', TRUE), -- Ласточка в ремонте
+((SELECT train_id FROM trains WHERE model = 'Ласточка'), (SELECT brigade_id FROM brigades WHERE name = 'Бригада по ремонту вагонов'), '2023-10-10 08:00:00', NULL, 'ТР-1', 'Обнаружена серьезная неисправность ходовой части, ожидает запчастей', TRUE),
 ((SELECT train_id FROM trains WHERE model = 'ЧС7'), (SELECT brigade_id FROM brigades WHERE name = 'Бригада по ремонту локомотивов'), '2023-11-18 20:00:00', '2023-11-18 23:00:00', 'рейсовый', 'Устранено КЗ в цепи управления', TRUE),
-((SELECT train_id FROM trains WHERE model = 'ЭР2'), (SELECT brigade_id FROM brigades WHERE name = 'Бригада по ремонту вагонов'), '2023-11-01 08:00:00', '2023-11-05 16:00:00', 'ТР-2', 'Проведен плановый ремонт с заменой части электрооборудования', TRUE); -- ЭР2 прошел ремонт
+((SELECT train_id FROM trains WHERE model = 'ЭР2'), (SELECT brigade_id FROM brigades WHERE name = 'Бригада по ремонту вагонов'), '2023-11-01 08:00:00', '2023-11-05 16:00:00', 'ТР-2', 'Проведен плановый ремонт с заменой части электрооборудования', TRUE);
 
 
 INSERT INTO passengers (first_name, last_name, middle_name, birth_date, gender, passport_series, passport_number, phone_number, email) VALUES
@@ -183,13 +182,13 @@ INSERT INTO seats (car_id, seat_number, seat_type, is_available, features) VALUE
 ((SELECT car_id FROM cars WHERE car_number = '001П'), '2', 'верхнее', TRUE, 'У прохода'),
 ((SELECT car_id FROM cars WHERE car_number = '001П'), '3', 'нижнее', TRUE, 'У окна'),
 ((SELECT car_id FROM cars WHERE car_number = '001П'), '4', 'верхнее', TRUE, 'У прохода'),
-((SELECT car_id FROM cars WHERE car_number = '001П'), '37', 'боковое нижнее', TRUE, NULL),  --(Боковые места)
-((SELECT car_id FROM cars WHERE car_number = '001П'), '38', 'боковое верхнее', TRUE, NULL), --(Боковые места)
+((SELECT car_id FROM cars WHERE car_number = '001П'), '37', 'боковое нижнее', TRUE, NULL),
+((SELECT car_id FROM cars WHERE car_number = '001П'), '38', 'боковое верхнее', TRUE, NULL),
 -- Купе 003К (car_id=3)
 ((SELECT car_id FROM cars WHERE car_number = '003К'), '1', 'нижнее', TRUE, NULL),
 ((SELECT car_id FROM cars WHERE car_number = '003К'), '2', 'верхнее', TRUE, NULL),
 ((SELECT car_id FROM cars WHERE car_number = '003К'), '3', 'нижнее', TRUE, NULL),
-((SELECT car_id FROM cars WHERE car_number = '003К'), '4', 'верхнее', FALSE, 'Неисправна полка'), -- (Одно место не доступно)
+((SELECT car_id FROM cars WHERE car_number = '003К'), '4', 'верхнее', FALSE, 'Неисправна полка'),
 -- Сидячий 004С (car_id=4)
 ((SELECT car_id FROM cars WHERE car_number = '004С'), '5A', 'у окна', TRUE, 'Розетка'),
 ((SELECT car_id FROM cars WHERE car_number = '004С'), '5B', 'у прохода', TRUE, NULL),
@@ -228,7 +227,7 @@ INSERT INTO tickets (schedule_id, passenger_id, seat_id, luggage_id, purchase_da
  '2023-11-23 15:00:00', 1800.00, 'забронирован'),
 -- Билет на рейс 758А, купе 003К, место 3
 ((SELECT schedule_id FROM schedules WHERE train_number = '758А' AND departure_time = '2023-11-25 14:00:00'),
- (SELECT passenger_id FROM passengers WHERE passport_series = '9012' AND passport_number = '345678'), -- Николай Смирнов
+ (SELECT passenger_id FROM passengers WHERE passport_series = '9012' AND passport_number = '345678'),
  (SELECT seat_id FROM seats WHERE car_id = (SELECT car_id FROM cars WHERE car_number = '003К') AND seat_number = '3'),
  NULL, -- Без багажа
  '2023-11-24 18:00:00', 4500.00, 'возвращен'),

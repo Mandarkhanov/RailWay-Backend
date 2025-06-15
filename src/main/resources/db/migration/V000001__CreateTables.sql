@@ -1,4 +1,3 @@
--- Установка кодировки и стандартных строк
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 
@@ -11,7 +10,7 @@ CREATE TABLE departments (
 CREATE TABLE positions (
     position_id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE,
-    department_id INTEGER REFERENCES departments(department_id) ON DELETE RESTRICT, -- Запретить удаление отдела, если есть должности
+    department_id INTEGER REFERENCES departments(department_id) ON DELETE RESTRICT,
     min_salary DECIMAL(10,2) CHECK (min_salary >= 0),
     max_salary DECIMAL(10,2) CHECK (max_salary >= min_salary AND max_salary >= 0),
     description TEXT
@@ -24,7 +23,7 @@ CREATE TABLE employees (
     birth_date DATE CHECK (birth_date < CURRENT_DATE),
     gender CHAR(1) CHECK (gender IN ('М', 'Ж')),
     hire_date DATE NOT NULL CHECK (hire_date <= CURRENT_DATE),
-    position_id INTEGER REFERENCES positions(position_id) ON DELETE RESTRICT, -- Запретить удаление должности, если есть сотрудники
+    position_id INTEGER REFERENCES positions(position_id) ON DELETE RESTRICT,
     salary DECIMAL(10,2) CHECK (salary >= 0),
     children_count INTEGER DEFAULT 0 CHECK (children_count >= 0),
     is_active BOOLEAN DEFAULT TRUE NOT NULL
@@ -32,22 +31,22 @@ CREATE TABLE employees (
 
 CREATE TABLE medical_examinations (
     examination_id SERIAL PRIMARY KEY,
-    employee_id INTEGER REFERENCES employees(employee_id) ON DELETE CASCADE, -- При удалении сотрудника удалить его осмотры
+    employee_id INTEGER REFERENCES employees(employee_id) ON DELETE CASCADE,
     examination_date DATE NOT NULL,
-    result BOOLEAN NOT NULL, -- TRUE = годен, FALSE = не годен
+    result BOOLEAN NOT NULL,
     notes TEXT
 );
 
 CREATE TABLE brigades (
     brigade_id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE,
-    department_id INTEGER REFERENCES departments(department_id) ON DELETE SET NULL, -- Если отдел удалят, бригада останется без отдела
-    manager_id INTEGER REFERENCES employees(employee_id) ON DELETE SET NULL -- Если менеджер уволится/удален, обнулить ссылку
+    department_id INTEGER REFERENCES departments(department_id) ON DELETE SET NULL,
+    manager_id INTEGER REFERENCES employees(employee_id) ON DELETE SET NULL
 );
 
 CREATE TABLE employee_brigade (
-    employee_id INTEGER REFERENCES employees(employee_id) ON DELETE CASCADE, -- Если сотрудник удален, убрать его из бригад
-    brigade_id INTEGER REFERENCES brigades(brigade_id) ON DELETE CASCADE, -- Если бригада расформирована, сотрудники убираются из этой связи
+    employee_id INTEGER REFERENCES employees(employee_id) ON DELETE CASCADE,
+    brigade_id INTEGER REFERENCES brigades(brigade_id) ON DELETE CASCADE,
     assignment_date DATE DEFAULT CURRENT_DATE,
     PRIMARY KEY (employee_id, brigade_id)
 );
@@ -91,12 +90,12 @@ CREATE TABLE route_stops (
     route_stop_id SERIAL PRIMARY KEY,
     route_id INTEGER NOT NULL REFERENCES routes(route_id) ON DELETE CASCADE,
     station_id INTEGER NOT NULL REFERENCES stations(station_id) ON DELETE RESTRICT,
-    stop_order INTEGER NOT NULL CHECK (stop_order > 0), -- Порядковый номер остановки на маршруте (1, 2, 3...)
-    arrival_offset INTEGER, -- ИЗМЕНЕНО: Смещение в минутах
-    departure_offset INTEGER, -- ИЗМЕНЕНО: Смещение в минутах
-    platform VARCHAR(10), -- Номер пути/платформы
-    UNIQUE (route_id, stop_order), -- Остановка должна быть уникальной по порядку в маршруте
-    UNIQUE (route_id, station_id) -- Станция должна быть уникальной в маршруте (обычно)
+    stop_order INTEGER NOT NULL CHECK (stop_order > 0),
+    arrival_offset INTEGER,
+    departure_offset INTEGER,
+    platform VARCHAR(10),
+    UNIQUE (route_id, stop_order),
+    UNIQUE (route_id, station_id)
 );
 
 CREATE TABLE schedules (
@@ -126,8 +125,7 @@ CREATE TABLE maintenance (
     brigade_id INTEGER REFERENCES brigades(brigade_id) ON DELETE SET NULL,
     start_date TIMESTAMP NOT NULL,
     end_date TIMESTAMP CHECK (end_date >= start_date),
-    type VARCHAR(50) NOT NULL CHECK (type IN ('плановый', 'рейсовый', 'аварийный', 'деповской',
-    'ТО-1', 'ТО-2', 'ТР-1', 'ТР-2', 'ТР-3', 'КР-1', 'КР-2')),-- Расширены типы ТО
+    type VARCHAR(50) NOT NULL CHECK (type IN ('плановый', 'рейсовый', 'аварийный', 'деповской', 'ТО-1', 'ТО-2', 'ТР-1', 'ТР-2', 'ТР-3', 'КР-1', 'КР-2')),
     result TEXT,
     is_repair BOOLEAN DEFAULT FALSE NOT NULL
 );
@@ -177,7 +175,6 @@ CREATE TABLE tickets (
     ticket_id SERIAL PRIMARY KEY,
     schedule_id INTEGER NOT NULL REFERENCES schedules(schedule_id) ON DELETE RESTRICT,
     passenger_id INTEGER NOT NULL REFERENCES passengers(passenger_id) ON DELETE RESTRICT,
---    car_id INTEGER NOT NULL REFERENCES cars(car_id) ON DELETE RESTRICT, ЛИШНЕЕ (В МЕСТЕ УЖЕ ЕСТЬ ВАГОН)
     seat_id INTEGER NOT NULL REFERENCES seats(seat_id) ON DELETE RESTRICT,
     luggage_id INTEGER REFERENCES luggage(luggage_id) ON DELETE SET NULL,
     purchase_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
