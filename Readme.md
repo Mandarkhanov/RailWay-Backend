@@ -97,15 +97,16 @@
 ### Пошаговая инструкция
 
 1. **Клонируйте репозиторий:**
-    ```
+
+    ```bash
     git clone <your-repository-url> cd RailWay-Backend
     ```
-
 
 2. **Настройте и запустите базу данных в Docker:**
 
     - Создайте в корне проекта файл docker-compose.yml со следующим содержимым:
-        ```
+        
+        ```bash
             version: '3.8'
        
             services:
@@ -126,10 +127,11 @@
             volumes:
                 postgres_data:
         ```
-      - Запустите контейнер с базой данных:
+      
+    - Запустите контейнер с базой данных:
 
-        ```
-        docker-compose up -d
+        ```bash
+            docker-compose up -d
         ```
 
 3. **Проверьте конфигурацию приложения:**
@@ -141,12 +143,13 @@
     - При первом запуске **Flyway** автоматически выполнит все миграции, создаст таблицы и заполнит их начальными данными.
 
     - Выполните в терминале (в корне проекта):
-      ```
-      # Для Linux/macOS
-      ./gradlew bootRun 
 
-      # Для Windows
-      .\gradlew.bat bootRun
-      ```
+        ```bash
+            # Для Linux/macOS
+            ./gradlew bootRun 
+
+            # Для Windows
+            .\gradlew.bat bootRun
+        ```
 
 5. **Готово!** Приложение будет доступно по адресу http://localhost:8080.
