@@ -82,40 +82,39 @@
 1. **Клонируйте репозиторий:**
 
     ```bash
-    git clone https://github.com/Mandarkhanov/RailWay-Backend.git cd RailWay-Backend
+    git clone https://github.com/Mandarkhanov/RailWay-Backend.git
     ```
 
 2. **Настройте и запустите базу данных в Docker:**
+    - Создайте в корне проекта файл docker-compose.yml со следующим содержимым: 
 
-    - Создайте в корне проекта файл docker-compose.yml со следующим содержимым:
-        
-        ```bash
-            version: '3.8'
-       
-            services:
-                postgres-db:
-                    image: 'postgres:12-alpine'
-                    container_name: railway-db
-                    environment:
-                    POSTGRES_USER: postgres
-                    POSTGRES_PASSWORD: 1234
-                    POSTGRES_DB: railway
-                ports:
-                    - "5432:5432"
-                volumes:
-                    - postgres_data:/var/lib/postgresql/data
-                restart:
-                    always
-       
-            volumes:
-                postgres_data:
-        ```
-      
-    - Запустите контейнер с базой данных:
+    ```bash
+    version: '3.8'
+   
+    services:
+        postgres-db:
+            image: 'postgres:12-alpine'
+            container_name: railway-db
+            environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: 1234
+            POSTGRES_DB: railway
+        ports:
+            - "5432:5432"
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        restart:
+            always
+   
+    volumes:
+        postgres_data:
+    ```
+   
+   - Запустите контейнер с базой данных:
 
-        ```bash
-            docker-compose up -d
-        ```
+    ```bash
+    docker-compose up -d
+    ```
 
 3. **Проверьте конфигурацию приложения:**
 
